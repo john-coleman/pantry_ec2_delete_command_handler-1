@@ -146,15 +146,12 @@ PLATFORMS
   ruby
 
 DEPENDENCIES
-  aws-sdk
-  daemons
   em-winrm!
   guard-bundler
   guard-rspec
   pantry_daemon_common!
   pry-debugger
   rake
-  rest-client
   rspec
   rspec-fire
   simplecov
