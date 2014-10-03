@@ -2,9 +2,8 @@
 
 require 'rubygems'
 require 'wonga/daemon'
-require_relative 'pantry_ec2_delete_command_handler/pantry_ec2_delete_command_handler'
+require_relative 'lib/wonga/pantry/ec2_delete_command_handler'
 
-config_path = File.join(File.dirname(File.symlink?(__FILE__) ? File.readlink(__FILE__) : __FILE__), "config")
-config_name = File.join(config_path, "daemon.yml")
-Wonga::Daemon.load_config(File.expand_path(config_name))
-Wonga::Daemon.run(Wonga::Daemon::PantryEc2DeleteCommandHandler.new(Wonga::Daemon.publisher,Wonga::Daemon.logger))
+dir_name = File.dirname(File.symlink?(__FILE__) ? File.readlink(__FILE__) : __FILE__)
+Wonga::Daemon.load_config(File.expand_path(File.join(dir_name, "config/daemon.yml")))
+Wonga::Daemon.run(Wonga::Pantry::Ec2DeleteCommandHandler.new(Wonga::Daemon.publisher, Wonga::Daemon.logger))
