@@ -4,8 +4,9 @@ require_relative '../../../../lib/wonga/pantry/ec2_delete_command_handler'
 describe Wonga::Pantry::Ec2DeleteCommandHandler do
   let(:publisher) { instance_double('Wonga::Publisher').as_null_object }
   let(:logger) { instance_double('Logger').as_null_object }
-  let(:ec2) { instance_double('AWS::EC2') }
+  let(:ec2) { AWS::EC2.new }
   let(:instance) { instance_double('AWS::EC2::Instance', id: 'i-00001234', exists?: true, status: :running) }
+  let(:client) { ec2.client }
 
   subject do
     described_class.new(publisher, logger, ec2)
@@ -47,6 +48,25 @@ describe Wonga::Pantry::Ec2DeleteCommandHandler do
 
         it 'does not call instance.terminate' do
           expect(instance).to_not receive(:terminate)
+          subject.handle_message({'instance_id'=>'i-00001234'})
+        end
+      end
+
+      context 'attached volumes' do
+        let(:instance) { instance_double('AWS::EC2::Instance', id: 'i-00001234', exists?: true, status: :shutting_down) }
+        let(:volume) { [{ volume_id: 'vol-21083656', snapshot_id: 'snap-b4ef17a9'}, { volume_id: 'vol-222222'}] }
+        before(:each) do
+          allow(client).to receive(:describe_volumes).with(filters: [{ instance_id: instance.id }]).and_return(volume_set: volume)
+        end
+
+        it 'should remove attached volumes when remove_volumes is set' do
+          expect(client).to receive(:delete_volume).with(volume_id: volume.first[:volume_id])
+          expect(client).to receive(:delete_volume).with(volume_id: volume.last[:volume_id])
+          subject.handle_message({'remove_volumes'=>true, 'instance_id'=>'i-00001234'})
+        end
+
+        it 'should not remove attached volumes' do
+          expect(client).to_not receive(:delete_volume)
           subject.handle_message({'instance_id'=>'i-00001234'})
         end
       end
