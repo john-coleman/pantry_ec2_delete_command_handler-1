@@ -1,4 +1,4 @@
-unless ENV["SKIP_COV"]
+unless ENV['SKIP_COV']
   require 'simplecov'
   require 'simplecov-rcov'
   SimpleCov.formatter = SimpleCov::Formatter::MultiFormatter[
@@ -10,7 +10,7 @@ end
 require 'aws'
 require 'spec_support/shared_daemons'
 
-AWS.config :access_key_id=>"test", :secret_access_key=>"test"
+AWS.config access_key_id: 'test', secret_access_key: 'test'
 AWS.stub!
 
 RSpec.configure do |config|
@@ -18,5 +18,5 @@ RSpec.configure do |config|
   # order dependency and want to debug it, you can fix the order by providing
   # the seed, which is printed after each run.
   #     --seed 1234
-  config.order = "random"
+  config.order = 'random'
 end

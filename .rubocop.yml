@@ -1,0 +1,17 @@
+AllCops:
+  Exclude:
+    - '**/metadata.rb'
+
+Style/ClassAndModuleChildren:
+  Enabled: false
+Style/CollectionMethods:
+  Enabled: false
+Style/Documentation:
+  Enabled: false
+
+Metrics/AbcSize:
+  Max: 30
+Metrics/LineLength:
+  Max: 160
+Metrics/MethodLength:
+  Max: 35

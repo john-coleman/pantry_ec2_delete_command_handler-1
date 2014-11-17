@@ -1,6 +1,6 @@
 source 'https://rubygems.org'
 
-gem 'pantry_daemon_common', git: 'git@github.com:wongatech/pantry_daemon_common.git', tag: 'v0.2.6'
+gem 'pantry_daemon_common', git: 'git@github.com:wongatech/pantry_daemon_common.git'
 
 group :development do
   gem 'guard-rspec'
@@ -13,4 +13,5 @@ group :test, :development do
   gem 'rspec', '~> 3.0'
   gem 'pry'
   gem 'rake'
+  gem 'rubocop'
 end
