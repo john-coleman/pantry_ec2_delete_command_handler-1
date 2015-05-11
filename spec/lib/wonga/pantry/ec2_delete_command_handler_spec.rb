@@ -1,7 +1,7 @@
 require 'spec_helper'
 require_relative '../../../../lib/wonga/pantry/ec2_delete_command_handler'
 
-describe Wonga::Pantry::Ec2DeleteCommandHandler do
+RSpec.describe Wonga::Pantry::Ec2DeleteCommandHandler do
   let(:publisher) { instance_double('Wonga::Publisher').as_null_object }
   let(:logger) { instance_double('Logger').as_null_object }
   let(:ec2) { AWS::EC2.new }
@@ -27,7 +27,6 @@ describe Wonga::Pantry::Ec2DeleteCommandHandler do
       end
 
       context 'is not terminating or terminated' do
-
         it 'calls instance.terminate' do
           expect(instance).to receive(:terminate).and_return(nil) # even on success returns nil
           subject.handle_message('instance_id' => 'i-00001234')

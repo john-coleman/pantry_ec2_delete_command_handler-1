@@ -1,6 +1,7 @@
 source 'https://rubygems.org'
 
 gem 'pantry_daemon_common', git: 'git@github.com:wongatech/pantry_daemon_common.git'
+gem 'aws-sdk-v1'
 
 group :development do
   gem 'guard-rspec'
