@@ -1,6 +1,5 @@
 #!/usr/bin/env ruby
 
-require 'rubygems'
 require 'wonga/daemon'
 require_relative 'lib/wonga/pantry/ec2_delete_command_handler'
 

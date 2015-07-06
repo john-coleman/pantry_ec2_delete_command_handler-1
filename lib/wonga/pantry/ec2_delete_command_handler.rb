@@ -1,18 +1,17 @@
-require 'aws-sdk-v1'
-
+require 'aws-sdk'
 module Wonga
   module Pantry
     class Ec2DeleteCommandHandler
-      def initialize(publisher, logger, ec2 = AWS::EC2.new)
+      def initialize(publisher, logger, ec2 = Aws::EC2::Resource.new)
         @ec2 = ec2
         @publisher = publisher
         @logger = logger
       end
 
       def handle_message(message)
-        instance = @ec2.instances[message['instance_id']]
+        instance = @ec2.instance message['instance_id']
         if instance.exists?
-          instance.terminate unless [:shutting_down, :terminated].include?(instance.status)
+          instance.terminate unless %w(shutting_down terminated).include?(instance.state.name)
           @logger.info("Instance #{message['id']} - name: #{message['hostname']}.#{message['domain']} #{instance.id} terminated")
 
           delete_volumes(message['instance_id']) if message['remove_volumes']
@@ -25,18 +24,7 @@ module Wonga
       private
 
       def delete_volumes(instance_id)
-        attached_volumes = @ec2.client.describe_volumes(filters: [{ name: 'attachment.instance-id', values: [instance_id] }])[:volume_set].map do |volume|
-          volume[:volume_id]
-        end
-
-        attached_volumes.each do |volume_id|
-          begin
-            @ec2.client.delete_volume(volume_id: volume_id)
-            @logger.info("Volume: #{volume_id} attached to instance: #{instance_id} has been deleted")
-          rescue AWS::EC2::Errors::InvalidVolume::NotFound
-            @logger.info("Volume: #{volume_id} attached to instance: #{instance_id} has been already deleted")
-          end
-        end
+        @ec2.volumes(filters: [{ name: 'attachment.instance-id', values: [instance_id] }]).each(&:delete)
       end
     end
   end
